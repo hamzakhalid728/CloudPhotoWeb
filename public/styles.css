@@ -1,0 +1,138 @@
+/* Global Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #fafafa;
+    color: #333;
+}
+
+nav {
+    background-color: #ffffff;
+    border-bottom: 1px solid #dbdbdb;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+nav h1 {
+    font-size: 1.5rem;
+    margin: 0;
+    color: #262626;
+}
+
+nav a {
+    text-decoration: none;
+    color: #0095f6;
+    margin-left: 15px;
+    font-weight: 600;
+}
+
+.container {
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 0 10px;
+}
+
+/* Form Styles (Creator View) */
+.upload-card {
+    background: white;
+    padding: 20px;
+    border: 1px solid #dbdbdb;
+    border-radius: 3px;
+}
+
+input[type="text"], textarea, input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #dbdbdb;
+    border-radius: 3px;
+    box-sizing: border-box; /* Fixes padding issues */
+}
+
+button {
+    background-color: #0095f6;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #0081d6;
+}
+
+/* Post Styles (Consumer View) */
+.post-card {
+    background: white;
+    border: 1px solid #dbdbdb;
+    border-radius: 3px;
+    margin-bottom: 30px;
+}
+
+.post-header {
+    padding: 15px;
+    border-bottom: 1px solid #efefef;
+    display: flex;
+    justify-content: space-between;
+}
+
+.post-location {
+    font-size: 0.8rem;
+    color: #8e8e8e;
+}
+
+.post-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.post-footer {
+    padding: 15px;
+}
+
+.post-caption {
+    margin-bottom: 10px;
+}
+
+.people-tag {
+    color: #00376b;
+    font-size: 0.9rem;
+}
+
+.comments-section {
+    margin-top: 10px;
+    border-top: 1px solid #efefef;
+    padding-top: 10px;
+}
+
+.comment {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.comment-input-area {
+    display: flex;
+    margin-top: 10px;
+}
+
+.comment-input-area input {
+    margin-bottom: 0;
+    border: none;
+}
+
+.comment-input-area button {
+    width: auto;
+    background: none;
+    color: #0095f6;
+    padding: 0 10px;
+}
