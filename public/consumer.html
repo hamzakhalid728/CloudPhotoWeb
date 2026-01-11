@@ -15,7 +15,7 @@
 
         /* Post Card */
         .post { background: white; border: 1px solid #dbdbdb; margin-bottom: 30px; padding: 15px; border-radius: 3px; }
-        .post img { width: 100%; height: auto; display: block; margin-top: 10px; }
+        .post img, .post video { width: 100%; height: auto; display: block; margin-top: 10px; }
         .post-info { margin-top: 10px; }
         .post-title { font-weight: bold; font-size: 1.1em; }
         .meta { color: #888; font-size: 0.9em; margin-bottom: 5px; }
@@ -38,7 +38,7 @@
     </div>
 
     <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="Search photos...">
+        <input type="text" id="searchInput" placeholder="Search content...">
         <button onclick="loadPosts()" class="action-btn">Search</button>
     </div>
 
@@ -54,7 +54,7 @@
             feed.innerHTML = ''; // Clear current list
 
             if(posts.length === 0) {
-                feed.innerHTML = '<p>No photos found.</p>';
+                feed.innerHTML = '<p>No content found.</p>';
                 return;
             }
 
@@ -68,13 +68,26 @@
                     avgRating = "No ratings";
                 }
 
+                // CHECK: Is it a Video or Image?
+                const isVideo = post.imageUrl.match(/\.(mp4|webm|ogg|mov)$/i);
+                
+                let mediaHtml = '';
+                if (isVideo) {
+                    mediaHtml = `<video controls>
+                                    <source src="${post.imageUrl}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                 </video>`;
+                } else {
+                    mediaHtml = `<img src="${post.imageUrl}" alt="Post Content">`;
+                }
+
                 // Create HTML for each post
                 const div = document.createElement('div');
                 div.className = 'post';
                 div.innerHTML = `
                     <div class="post-title">${post.title}</div>
                     <div class="meta">📍 ${post.location} | 👥 ${post.people}</div>
-                    <img src="${post.imageUrl}" alt="Post Image">
+                    ${mediaHtml}
                     <p>${post.caption}</p>
                     
                     <div class="interactions">
