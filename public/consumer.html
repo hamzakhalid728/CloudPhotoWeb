@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feed - CloudPhoto</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; background-color: #fafafa; padding: 0 1rem; }
+        .nav { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #ccc; }
+        a { margin-right: 15px; text-decoration: none; color: #333; }
+        
+        /* Search Bar */
+        .search-bar { margin-bottom: 20px; display: flex; gap: 10px; }
+        .search-bar input { flex: 1; padding: 10px; }
+
+        /* Post Card */
+        .post { background: white; border: 1px solid #dbdbdb; margin-bottom: 30px; padding: 15px; border-radius: 3px; }
+        .post img { width: 100%; height: auto; display: block; margin-top: 10px; }
+        .post-info { margin-top: 10px; }
+        .post-title { font-weight: bold; font-size: 1.1em; }
+        .meta { color: #888; font-size: 0.9em; margin-bottom: 5px; }
+        
+        /* Comments & Ratings */
+        .interactions { margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; }
+        .comment-list { font-size: 0.9em; color: #333; margin-bottom: 10px; }
+        .comment-item { padding: 2px 0; }
+        
+        input.comment-box { width: 70%; padding: 5px; }
+        button.action-btn { width: 25%; padding: 5px; background: #eee; border: 1px solid #ccc; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="nav">
+        <strong>Mode:</strong>
+        <a href="creator.html">Creator (Upload)</a>
+        <a href="consumer.html" style="font-weight: bold; color: #0078d4;">Consumer (Feed)</a>
+    </div>
+
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search photos...">
+        <button onclick="loadPosts()" class="action-btn">Search</button>
+    </div>
+
+    <div id="feed">Loading...</div>
+
+    <script>
+        async function loadPosts() {
+            const query = document.getElementById('searchInput').value;
+            const res = await fetch(`/api/posts?search=${query}`);
+            const posts = await res.json();
+            
+            const feed = document.getElementById('feed');
+            feed.innerHTML = ''; // Clear current list
+
+            if(posts.length === 0) {
+                feed.innerHTML = '<p>No photos found.</p>';
+                return;
+            }
+
+            posts.reverse().forEach(post => {
+                // Calculate Average Rating
+                let avgRating = 0;
+                if(post.ratings.length > 0) {
+                    const sum = post.ratings.reduce((a, b) => a + b, 0);
+                    avgRating = (sum / post.ratings.length).toFixed(1);
+                } else {
+                    avgRating = "No ratings";
+                }
+
+                // Create HTML for each post
+                const div = document.createElement('div');
+                div.className = 'post';
+                div.innerHTML = `
+                    <div class="post-title">${post.title}</div>
+                    <div class="meta">📍 ${post.location} | 👥 ${post.people}</div>
+                    <img src="${post.imageUrl}" alt="Post Image">
+                    <p>${post.caption}</p>
+                    
+                    <div class="interactions">
+                        <p><strong>Rating:</strong> ⭐ ${avgRating}</p>
+                        
+                        <div style="margin-bottom: 10px;">
+                            <button onclick="ratePost(${post.id}, 5)">Rate 5★</button>
+                            <button onclick="ratePost(${post.id}, 1)">Rate 1★</button>
+                        </div>
+
+                        <div class="comment-list" id="comments-${post.id}">
+                            ${post.comments.map(c => `<div class="comment-item">💬 ${c}</div>`).join('')}
+                        </div>
+                        
+                        <input type="text" id="input-${post.id}" class="comment-box" placeholder="Add a comment...">
+                        <button class="action-btn" onclick="addComment(${post.id})">Post</button>
+                    </div>
+                `;
+                feed.appendChild(div);
+            });
+        }
+
+        async function addComment(id) {
+            const input = document.getElementById('input-' + id);
+            const text = input.value;
+            if(!text) return;
+
+            await fetch('/api/posts/comment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ postId: id, commentText: text })
+            });
+            input.value = '';
+            loadPosts(); // Refresh to see new comment
+        }
+
+        async function ratePost(id, stars) {
+            await fetch('/api/posts/rate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ postId: id, rating: stars })
+            });
+            loadPosts(); // Refresh to see new rating
+        }
+
+        // Load posts when page opens
+        loadPosts();
+    </script>
+
+</body>
+</html>
